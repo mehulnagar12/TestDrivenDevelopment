@@ -50,5 +50,34 @@ public class TaskRepoTest {
         assertEquals(101, task.get().getId());
     }
 
-    //Similarly can perform update and delete operation test.
+    @Test
+    void deleteTaskTest(){
+        Task task = new Task();
+        task.setId(102);
+        task.setName("Task-2");
+
+        Task savedTask = taskRepository.save(task);
+        Optional<Task> taskOptional = taskRepository.findById(102);
+        assertTrue(taskOptional.isPresent(), "Task should exist");
+
+        taskRepository.deleteById(102);
+
+        Optional<Task> deletedTask = taskRepository.findById(102);
+        assertFalse(deletedTask.isPresent(), "Task should not exist");
+    }
+
+    @Test
+    void updateTaskTest(){
+        Task task = new Task();
+        task.setId(102);
+        task.setName("Task-2");
+
+        Task savedTask = taskRepository.save(task);
+        Optional<Task> taskOptional = taskRepository.findById(102);
+        assertTrue(taskOptional.isPresent(), "Task should exist");
+
+        taskOptional.get().setName("Update Task-2");
+        Task updatedTask = taskRepository.save(taskOptional.get());
+        assertEquals("Update Task-2", updatedTask.getName());
+    }
 }
