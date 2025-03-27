@@ -18,8 +18,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -47,5 +49,29 @@ public class ControllerTest {
         mockMvc.perform(get("/alltasks").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$",hasSize(2)));
+    }
+
+    @Test
+    void getTaskByIdTest() throws Exception {
+        Task task = new Task(101,"Task-1","description-1");
+
+        when(taskService.getTaskById(101)).thenReturn(task);
+
+        mockMvc.perform(get("/task/101").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void addTaskTest() throws Exception {
+        Task task = new Task(102,"Task-2","description-2");
+        String json = objectMapper.writeValueAsString(task);
+
+        when(taskService.saveTask(any(Task.class))).thenReturn(task);
+
+        mockMvc.perform(post("/task/add").contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk());
+
+        verify(taskService, times(1)).saveTask(any(Task.class));
     }
 }
