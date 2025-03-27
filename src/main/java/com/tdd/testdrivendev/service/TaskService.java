@@ -29,4 +29,13 @@ public class TaskService {
     public List<Task> getAllTasks(){
         return taskRepository.findAll();
     }
+
+    public Task getTaskById(int id) {
+        Optional<Task> task = taskRepository.findById(id);
+        return task.orElse(null);
+    }
+
+    public Task saveTask(Task task) {
+        return taskRepository.save(task);
+    }
 }
